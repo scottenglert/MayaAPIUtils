@@ -21,7 +21,7 @@ std::cout << "X= " << beginIt->x << std::endl;
 
 // using regular loops
 for(auto it = beginIt; it != endIt; ++it)
-	std::cout << *pnt << std::endl;
+	std::cout << *it << std::endl;
 	
 // using new range based loop in C++11
 for(auto pnt : myPointArrayRange)
