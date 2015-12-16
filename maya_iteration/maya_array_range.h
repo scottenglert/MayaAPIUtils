@@ -25,6 +25,7 @@ THE SOFTWARE.
 #ifndef MAYAITERATION_MAYA_ARRAY_RANGE_H_
 #define MAYAITERATION_MAYA_ARRAY_RANGE_H_
 
+#include <cassert>
 #include <iterator>
 
 namespace mayaiteration {
@@ -60,7 +61,7 @@ USAGE:
 
 	// using regular loops
 	for(auto it = beginIt; it != endIt; ++it)
-	   std::cout << *pnt << std::endl;
+	   std::cout << *it << std::endl;
 
 	// using new range based loop in C++11
 	for(auto pnt : myPointArrayRange)
@@ -84,17 +85,13 @@ public:
 	friend class MayaArrayRange;
 
 	protected:
-		C* c;
+		C& c;
 		unsigned int i;
 
-		MayaArrayIter(C* c) : c(c), i(0) {}
-		MayaArrayIter(C* c, unsigned int i) : c(c), i(i) {}
+		MayaArrayIter(C& c) : c(c), i(0) {}
+		MayaArrayIter(C& c, unsigned int i) : c(c), i(i) {}
 
 	public:
-		typedef typename std::iterator<std::random_access_iterator_tag, V, int>::pointer pointer;
-		typedef typename std::iterator<std::random_access_iterator_tag, V, int>::reference reference;
-		typedef typename std::iterator<std::random_access_iterator_tag, V, int>::difference_type difference_type;
-
 		template<typename C2, typename V2>
 		MayaArrayIter(const MayaArrayIter<C2, V2>& other) : c(other.c), i(other.i) {}
 		
@@ -106,11 +103,13 @@ public:
 		}
 
 		reference operator*() const	{
-			return (*c)[i];
+			assert(i < c.length());
+			return c[i];
 		}
 
 		pointer operator->() const {
-			return &(*c)[i];
+			assert(i < c.length());
+			return &c[i];
 		}
 
 		MayaArrayIter& operator++()	{
@@ -150,31 +149,31 @@ public:
 		}
 
 		reference operator[](const difference_type& n) const {
-			return (*c)[i + n];
+			return c[i + n];
 		}
 
 		bool operator==(const MayaArrayIter& other) const {
-			return i == other.i;
+			return (i == other.i && &c == &other.c);
 		}
 
 		bool operator!=(const MayaArrayIter& other) const {
-			return i != other.i;
+			return !(*this == other);
 		}
 
 		bool operator<(const MayaArrayIter& other) const {
-			return i < other.i;
+			return (i < other.i && &c == &other.c);
 		}
 
 		bool operator>(const MayaArrayIter& other) const {
-			return i > other.i;
+			return !(*this < other || *this == other);
 		}
 
 		bool operator<=(const MayaArrayIter& other) const {
-			return i <= other.i;
+			return !(*this > other);
 		}
 
 		bool operator>=(const MayaArrayIter& other) const {
-			return i >= other.i;
+			return !(*this < other);
 		}
 
 		difference_type operator+(const MayaArrayIter& other) const	{
@@ -189,35 +188,35 @@ public:
 	typedef MayaArrayIter<T, item_type> iterator;
 	typedef MayaArrayIter<const T, const item_type> const_iterator;
 	
-	MayaArrayRange(T* mayaArray) : a(mayaArray) {}
-	MayaArrayRange(T& mayaArray) : a(&mayaArray) {}
+	MayaArrayRange(T* mayaArray) : mArray(*mayaArray) {}
+	MayaArrayRange(T& mayaArray) : mArray(mayaArray) {}
 	
 	iterator begin() {
-		return iterator(a);
+		return iterator(mArray);
 	}
 
 	const_iterator begin() const {
-		return const_iterator(a);
+		return const_iterator(mArray);
 	}
 
 	const_iterator cbegin() const {
-		return const_iterator(a);
+		return const_iterator(mArray);
 	}
 
 	iterator end() {
-		return iterator(a, a->length());
+		return iterator(mArray, mArray.length());
 	}
 
 	const_iterator end() const {
-		return const_iterator(a, a->length());
+		return const_iterator(mArray, mArray.length());
 	}
 
 	const_iterator cend() const {
-		return const_iterator(a, a->length());
+		return const_iterator(mArray, mArray.length());
 	}
 
 protected:
-	T* a;
+	T& mArray;
 };
 
 } // namespace mayaiteration
