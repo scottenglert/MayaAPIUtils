@@ -22,36 +22,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef MAYAITERATION_MAYA_ARRAY_RANGE_H_
-#define MAYAITERATION_MAYA_ARRAY_RANGE_H_
+#ifndef MAYAARRAY_MAYA_ARRAY_H_
+#define MAYAARRAY_MAYA_ARRAY_H_
 
 #include <cassert>
 #include <iterator>
 
-namespace mayaiteration {
+namespace mayaarray {
 
 /**
-Maya Array Range Class Template
+Generic Maya Array Class Template
 
 DESCRIPTION:
-This template class is intended to provide Maya array classes a std iterator
-interface. This makes working with Maya's arrays more friendly and consistent
-with the C++ standard library. This allows use of iterator features with out
-sacrificing performance of copying the array to and from other containers. This
-template class should work for all of Maya's internal *Array classes that have
-an "[]"" operator and a "length" member function.
+This class template is intended to be more generic and compatible with the C++
+standard library and algorithms. One example is to use this class for creating
+iterators so you do not have to copy data to another standard library
+container, which saves memory and performance. This class should work for all
+of Maya's internal *Array classes that have the "[]"" operator and a "length"
+member function.
 
-A MayaArrayRange instance provides the commonly used "begin()" and "end()"
-functions. These return either an iterator or a const iterator. See the
-std iterator documentation for more information on using the iterator instance.
+A MayaArray instance provides the commonly used "begin()" and "end()"
+functions. This returns a random access compliant iterator. See the
+standard library iterator documentation for more information on using
+the iterator instance. More functionality will be added for more support.
 
 USAGE:
 	MPointArray myPointArray(5); // array of 5 points
-	mayaiteration::MayaArrayRange<MPointArray> myPointArrayRange(myPointArray);
+	mayaarray::MayaArray<MPointArray> myArray(myPointArray);
 	
 	// create iterators for the beginning and end of the array
-	mayaiteration::MayaArrayRange<MPointArray>::iterator beginIt = myPointArrayRange.begin();
-	mayaiteration::MayaArrayRange<MPointArray>::iterator endIt = myPointArrayRange.end();
+	mayaarray::MayaArray<MPointArray>::iterator beginIt = myArray.begin();
+	mayaarray::MayaArray<MPointArray>::iterator endIt = myArray.end();
 
 	// Assign a new point to the first point in the array
 	*beginIt = MPoint(1.0, 1.0, 1.0);
@@ -64,25 +65,28 @@ USAGE:
 	   std::cout << *it << std::endl;
 
 	// using new range based loop in C++11
-	for(auto pnt : myPointArrayRange)
+	for(auto pnt : myArray)
 	    std::cout << pnt << std::endl;
 
 	// sort the array using a comparsion function
 	std::sort(beginIt, endIt, myPointCompareFunc);
 
 	// getting the number of points between two iterators
-	mayaiteration::MayaArrayRange<MPointArray>::iterator::difference_type dist = std::distance(beginIt, endIt);
+	mayaarray::MayaArray<MPointArray>::iterator::difference_type dist = std::distance(beginIt, endIt);
 	std::cout << dist << std::endl;
+
+	// append 3 MPoints to the array
+	std::fill_n(std::back_inserter(myArray), 3, MPoint());
 */
 template<typename T>
-class MayaArrayRange {
+class MayaArray {
 protected:
-	typedef typename std::remove_reference<decltype(std::declval<T>()[0])>::type item_type;
+	T& mArray;
 
 public:
 	template<typename C, typename V>
 	class MayaArrayIter : public std::iterator<std::random_access_iterator_tag, V, int>	{
-	friend class MayaArrayRange;
+	friend class MayaArray;
 
 	protected:
 		C& c;
@@ -185,12 +189,18 @@ public:
 		}
 	};
 
-	typedef MayaArrayIter<T, item_type> iterator;
-	typedef MayaArrayIter<const T, const item_type> const_iterator;
+	typedef typename std::remove_reference<decltype(std::declval<T>()[0])>::type value_type;
+	typedef const value_type const_reference;
+	typedef value_type reference;
+	typedef unsigned int size_type;
+
+	typedef MayaArrayIter<T, value_type> iterator;
+	typedef MayaArrayIter<const T, const value_type> const_iterator;
+
+	MayaArray(T* mayaArray) : mArray(*mayaArray) {}
+	MayaArray(T& mayaArray) : mArray(mayaArray) {}
 	
-	MayaArrayRange(T* mayaArray) : mArray(*mayaArray) {}
-	MayaArrayRange(T& mayaArray) : mArray(mayaArray) {}
-	
+	// iteration member functions
 	iterator begin() {
 		return iterator(mArray);
 	}
@@ -215,10 +225,25 @@ public:
 		return const_iterator(mArray, mArray.length());
 	}
 
-protected:
-	T& mArray;
+	// modifier member functions
+	void push_back(const value_type& value) {
+		mArray.append(value);
+	}
+
+	void push_front(const value_type& value) {
+		mArray.insert(value, 0);
+	}
+
+	reference operator[](size_type pos) {
+		return mArray[pos];
+	}
+
+	const_reference operator[](size_type pos) const {
+		return mArray[pos];
+	}
+
 };
 
-} // namespace mayaiteration
+} // namespace mayaarray
 
-#endif // MAYAITERATION_MAYA_ARRAY_RANGE_H_
+#endif // MAYAARRAY_MAYA_ARRAY_H_
