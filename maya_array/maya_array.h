@@ -24,7 +24,7 @@ THE SOFTWARE.
 #ifndef MAYAARRAY_MAYA_ARRAY_H_
 #define MAYAARRAY_MAYA_ARRAY_H_
 
-#include <cassert>
+#include <stdexcept>
 #include <maya_iteration/maya_array_range.h>
 
 namespace mayaarray {
@@ -95,9 +95,10 @@ protected:
 	T mArray;
 
 public:
-	typedef typename std::remove_reference<decltype(std::declval<T>()[0])>::type value_type;
-	typedef const value_type const_reference;
-	typedef value_type reference;
+	// there are different types returned based if the array is const or not
+	typedef typename decltype(std::declval<T>()[0]) reference;
+	typedef typename decltype(std::declval<const T>()[0]) const_reference;
+	typedef typename std::remove_reference<reference>::type value_type;
 	typedef unsigned int size_type;
 
 	typedef typename mayaiteration::MayaArrayRange<T>::iterator iterator;
