@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015 Scott Englert
+Copyright (c) 2016 Scott Englert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@ THE SOFTWARE.
 #define MAYAARRAY_MAYA_ARRAY_H_
 
 #include <cassert>
-#include <iterator>
 #include <maya_iteration/maya_array_range.h>
 
 namespace mayaarray {
