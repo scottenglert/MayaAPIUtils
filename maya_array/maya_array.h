@@ -188,7 +188,7 @@ public:
 	/**
     Returns a const iterator for one past the last element in the array
 	*/
-	const_iterator end() const {
+	inline const_iterator end() const {
 		return const_iterator(mArray, mArray.length());
 	}
 
