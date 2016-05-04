@@ -199,6 +199,8 @@ public:
 
 	typedef MayaArrayIter<T, item_type, ref_type> iterator;
 	typedef MayaArrayIter<const T, const item_type, const_ref_type> const_iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 	
 	MayaArrayRange(T* mayaArray) : mArray(*mayaArray) {}
 	MayaArrayRange(T& mayaArray) : mArray(mayaArray) {}
@@ -215,6 +217,18 @@ public:
 		return const_iterator(mArray);
 	}
 
+	reverse_iterator rbegin() {
+		return reverse_iterator(end());
+	}
+
+	const_reverse_iterator rbegin() const {
+		return const_reverse_iterator(end());
+	}
+
+	const_reverse_iterator crbegin() const {
+		return const_reverse_iterator(cend());
+	}
+
 	iterator end() {
 		return iterator(mArray, mArray.length());
 	}
@@ -226,6 +240,19 @@ public:
 	const_iterator cend() const {
 		return const_iterator(mArray, mArray.length());
 	}
+
+	reverse_iterator rend() {
+		return reverse_iterator(begin());
+	}
+
+	const_reverse_iterator rend() const {
+		return const_reverse_iterator(begin());
+	}
+
+	const_reverse_iterator crend() const {
+		return const_reverse_iterator(cbegin());
+	}
+
 
 protected:
 	T& mArray;

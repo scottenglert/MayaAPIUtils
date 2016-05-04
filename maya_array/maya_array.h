@@ -103,6 +103,8 @@ public:
 
 	typedef typename mayaiteration::MayaArrayRange<T>::iterator iterator;
 	typedef typename mayaiteration::MayaArrayRange<T>::const_iterator const_iterator;
+	typedef typename mayaiteration::MayaArrayRange<T>::reverse_iterator reverse_iterator;
+	typedef typename mayaiteration::MayaArrayRange<T>::const_reverse_iterator const_reverse_iterator;
 
 	/**
     Creates an empty array
@@ -179,6 +181,27 @@ public:
 	}
 
 	/**
+    Returns a reverse iterator for the last element in the array
+	*/
+	reverse_iterator rbegin() {
+		return reverse_iterator(end());
+	}
+
+	/**
+    Returns a const reverse iterator for the last element in the array
+	*/
+	const_reverse_iterator rbegin() const {
+		return const_reverse_iterator(end());
+	}
+
+	/**
+    Returns a const reverse iterator for the last element in the array
+	*/
+	const_reverse_iterator crbegin() const {
+		return const_reverse_iterator(cend());
+	}
+
+	/**
     Returns an iterator for one past the last element in the array
 	*/
 	inline iterator end() {
@@ -197,6 +220,27 @@ public:
 	*/
 	inline const_iterator cend() const {
 		return const_iterator(mArray, mArray.length());
+	}
+
+	/**
+    Returns a reverse iterator for one before the first element in the array
+	*/
+	reverse_iterator rend() {
+		return reverse_iterator(begin());
+	}
+
+	/**
+    Returns a const reverse iterator for one before the first element in the array
+	*/
+	const_reverse_iterator rend() const {
+		return const_reverse_iterator(begin());
+	}
+
+	/**
+    Returns a const reverse iterator for one before the first element in the array
+	*/
+	const_reverse_iterator crend() const {
+		return const_reverse_iterator(cbegin());
 	}
 
 	/**
