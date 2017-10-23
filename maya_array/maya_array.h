@@ -141,6 +141,7 @@ public:
 	*/
 	MayaArray& operator=(const T& other) {
 		mArray = other;
+		return *this;
 	}
 
 	/**
@@ -150,12 +151,20 @@ public:
 	*/
 	MayaArray& operator=(const MayaArray& other) {
 		mArray = other.mArray;
+		return *this;
 	}
 
 	/**
-    Returns an reference to underlying Maya array instance
+    Returns a reference to underlying Maya array instance
 	*/
 	inline T& array() {
+		return mArray;
+	}
+
+	/**
+	Returns a const reference to the underlying Maya array instance
+	*/
+	inline const T& array() const {
 		return mArray;
 	}
 

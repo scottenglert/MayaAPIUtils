@@ -97,11 +97,11 @@ public:
 	friend class mayaarray::MayaArray;
 
 	protected:
-		C& c;
+		C* c;
 		unsigned int i;
 
-		MayaArrayIter(C& c) : c(c), i(0) {}
-		MayaArrayIter(C& c, unsigned int i) : c(c), i(i) {}
+		MayaArrayIter(C& c) : c(&c), i(0) {}
+		MayaArrayIter(C& c, unsigned int i) : c(&c), i(i) {}
 
 	public:
 		template<typename C2, typename V2, typename R2>
@@ -115,13 +115,13 @@ public:
 		}
 
 		reference operator*() const	{
-			assert(i < c.length());
-			return c[i];
+			assert(i < c->length());
+			return (*c)[i];
 		}
 
 		pointer operator->() const {
-			assert(i < c.length());
-			return &c[i];
+			assert(i < c->length());
+			return &(*c)[i];
 		}
 
 		MayaArrayIter& operator++()	{
@@ -161,11 +161,11 @@ public:
 		}
 
 		reference operator[](const difference_type& n) const {
-			return c[i + n];
+			return (*c)[i + n];
 		}
 
 		bool operator==(const MayaArrayIter& other) const {
-			return (i == other.i && &c == &other.c);
+			return (i == other.i && c == other.c);
 		}
 
 		bool operator!=(const MayaArrayIter& other) const {
@@ -173,7 +173,7 @@ public:
 		}
 
 		bool operator<(const MayaArrayIter& other) const {
-			return (i < other.i && &c == &other.c);
+			return (i < other.i && c == other.c);
 		}
 
 		bool operator>(const MayaArrayIter& other) const {
@@ -252,7 +252,6 @@ public:
 	const_reverse_iterator crend() const {
 		return const_reverse_iterator(cbegin());
 	}
-
 
 protected:
 	T& mArray;
