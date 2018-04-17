@@ -135,15 +135,15 @@ public:
 		}
 
 		MayaArrayIter operator++(int) {
-			return MayaArrayIter(c, i++);
+			return MayaArrayIter(*c, i++);
 		}
 
 		MayaArrayIter operator--(int) {
-			return MayaArrayIter(c, i--);
+			return MayaArrayIter(*c, i--);
 		}
 
 		MayaArrayIter operator+(const difference_type& n) const	{
-			return MayaArrayIter(c, (i + n));
+			return MayaArrayIter(*c, (i + n));
 		}
 
 		MayaArrayIter& operator+=(const difference_type& n)	{
@@ -152,7 +152,7 @@ public:
 		}
 
 		MayaArrayIter operator-(const difference_type& n) const	{
-			return MayaArrayIter(c, (i - n));
+			return MayaArrayIter(*c, (i - n));
 		}
 
 		MayaArrayIter& operator-=(const difference_type& n)	{
